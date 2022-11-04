@@ -1,0 +1,5 @@
+venv
+.idea
+User
+temp.py
+chromedriver.exe
