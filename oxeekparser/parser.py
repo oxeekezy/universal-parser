@@ -7,25 +7,43 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 class Parser:
-    def __init__(self, chrome_path, profile_path, sleep=10):
-        self._html_body = ''
+    _sleep = 0
+    _html_body = ''
+    _json_data = ''
+    _get_code = True
+    _search_result = []
+    _response_code = None
+    _chrome_service = None
+    _chrome_options = None
+    _chrome_capabilities = None
+
+    def __init__(self, chrome_path, profile_path, get_response_code=True, sleep=10):
+        self._set_response_possibility(get_response_code)
+        self._set_sleep(sleep)
+        self._set_chrome(chrome_path, profile_path)
+
+    def _set_response_possibility(self, get_response_code):
+        self._get_code = get_response_code
+
+    def _set_sleep(self, sleep):
         self._sleep = sleep
-        self._response_code = '0'
-        self._search_result = []
+
+    def _set_chrome(self, chrome_path, profile_path):
         self._chrome_service = Service(chrome_path)
         self._chrome_options = webdriver.ChromeOptions()
-        self._chrome_capabilities = DesiredCapabilities.CHROME.copy()
+        self._set_chrome_options(profile_path)
 
-        self.set_chrome_options(profile_path)
-        self.set_chrome_capabilities()
+        if self._get_response_code:
+            self._chrome_capabilities = DesiredCapabilities.CHROME.copy()
+            self._set_chrome_capabilities()
 
-    def set_chrome_options(self, profile_path):
+    def _set_chrome_options(self, profile_path):
         self._chrome_options.add_argument('--allow-profiles-outside-user-dir')
         self._chrome_options.add_argument('--enable-profile-shortcut-manager')
         self._chrome_options.add_argument(f'user-data-dir={profile_path}')
         self._chrome_options.add_argument('--profile-directory=Default')
 
-    def set_chrome_capabilities(self):
+    def _set_chrome_capabilities(self):
         self._chrome_capabilities['goog:loggingPrefs'] = {'performance': 'ALL'}
 
     def _parse(self, url):
@@ -33,7 +51,9 @@ class Parser:
                               desired_capabilities=self._chrome_capabilities,
                               options=self._chrome_options) as driver:
             driver.get(url)
-            self._get_response_code(driver.get_log('performance'))
+
+            if self._get_code:
+                self._get_response_code(driver.get_log('performance'))
 
             time.sleep(self._sleep)
             body = driver.page_source
@@ -51,25 +71,34 @@ class Parser:
                         'content-type']
                     response_received = response_logs['message']['method'] == 'Network.responseReceived'
                     if content_type and response_received:
-                        self._response_code = response_logs['message']['params']['response']['status']
+                        self._response_code = int(response_logs['message']['params']['response']['status'])
                 except:
                     pass
 
     def _regular_search(self, regular):
-        self._search_result = re.findall(regular, self._html_body)
+        return re.findall(regular, self._html_body)
 
-    def _put_html_to_file(self, path):
-        with open(path, 'w+', encoding='utf-8') as file:
-            file.write(self._html_body)
+    def _create_json(self):
+        self._json_data = {'response_code': self._response_code, 'matches': self._search_result}
+        pass
 
     def handle(self, url, regular):
-        self._parse(url)._regular_search(regular)
-        self._put_html_to_file(f'result.html')
-        return self._search_result
+        self._search_result = self._parse(url)._regular_search(regular)
+        self._create_json()
+        return self
 
-    def json_handle(self, url, regular):
-        results = self.handle(url, regular)
-        data = {'status code': self._response_code, 'regular results': results}
+    def save_json(self, path):
+        with open(path, 'w+', encoding='utf-8') as file:
+            json.dump(self._json_data, file)
+        return self
 
-        with open('result.json', 'w+', encoding='utf-8') as file:
-            json.dump(data, file)
+    def get_json(self):
+        return self._json_data
+
+    def save_html(self, path):
+        with open(path, 'w+', encoding='utf-8') as file:
+            file.write(self._html_body)
+        return self
+
+    def get_html(self):
+        return self._html_body
