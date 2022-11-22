@@ -3,8 +3,6 @@ venv
 User
 build
 dist
+temps
 oxeekparser.egg-info
-temp.py
 chromedriver.exe
-result.html
-result.json

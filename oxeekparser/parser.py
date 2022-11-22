@@ -9,7 +9,6 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 class Parser:
     _sleep = 0
     _html_body = ''
-    _json_data = ''
     _get_code = True
     _search_result = []
     _response_code = None
@@ -75,25 +74,9 @@ class Parser:
                 except:
                     pass
 
-    def _regular_search(self, regular):
-        return re.findall(regular, self._html_body)
-
-    def _create_json(self):
-        self._json_data = {'response_code': self._response_code, 'matches': self._search_result}
-        pass
-
-    def handle(self, url, regular):
-        self._search_result = self._parse(url)._regular_search(regular)
-        self._create_json()
+    def handle(self, url):
+        self._parse(url)
         return self
-
-    def save_json(self, path):
-        with open(path, 'w+', encoding='utf-8') as file:
-            json.dump(self._json_data, file)
-        return self
-
-    def get_json(self):
-        return self._json_data
 
     def save_html(self, path):
         with open(path, 'w+', encoding='utf-8') as file:
