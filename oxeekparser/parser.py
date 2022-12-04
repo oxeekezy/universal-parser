@@ -63,16 +63,19 @@ class Parser:
 
     def _get_response_code(self, logs):
         for log in logs:
-            if log['message']:
-                response_logs = json.loads(log['message'])
-                try:
-                    content_type = 'text/html' in response_logs['message']['params']['response']['headers'][
-                        'content-type']
-                    response_received = response_logs['message']['method'] == 'Network.responseReceived'
-                    if content_type and response_received:
-                        self._response_code = int(response_logs['message']['params']['response']['status'])
-                except:
-                    pass
+            if not log['message']:
+                pass
+            
+            response_logs = json.loads(log['message'])
+            try:
+                content_type = 'text/html' in response_logs['message']['params']['response']['headers'][
+                    'content-type']
+                response_received = response_logs['message']['method'] == 'Network.responseReceived'
+                if content_type and response_received:
+                    self._response_code = int(response_logs['message']['params']['response']['status'])
+            except:
+                pass
+                
 
     def handle(self, url):
         self._parse(url)
@@ -85,3 +88,6 @@ class Parser:
 
     def get_html(self):
         return self._html_body
+    
+    def get_response(self):
+        return self._response_code
