@@ -9,7 +9,7 @@ with open('requirements.txt', 'r') as file:
 
 setuptools.setup(
     name="oxeekparser",
-    version="3.0.0",
+    version="3.1.1",
     author="oxeek",
     author_email="workkukin@gmail.com",
     description="Universal parser with using regex",

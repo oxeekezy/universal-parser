@@ -1,4 +1,3 @@
-import re
 import time
 import json
 from selenium import webdriver
@@ -75,7 +74,6 @@ class Parser:
                     self._response_code = int(response_logs['message']['params']['response']['status'])
             except:
                 pass
-                
 
     def handle(self, url):
         self._parse(url)
