@@ -15,7 +15,7 @@ class Parser:
     _chrome_options = None
     _chrome_capabilities = None
 
-    def __init__(self, chrome_path, profile_path, get_response_code=True, sleep=10):
+    def __init__(self, chrome_path: str, profile_path: str, get_response_code=True, sleep=10):
         self._set_response_possibility(get_response_code)
         self._set_sleep(sleep)
         self._set_chrome(chrome_path, profile_path)
