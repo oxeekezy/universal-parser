@@ -6,3 +6,4 @@ dist
 temps
 oxeekparser.egg-info
 chromedriver.exe
+temp.py

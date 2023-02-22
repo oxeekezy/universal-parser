@@ -11,17 +11,19 @@ class Parser:
     _get_code = True
     _search_result = []
     _response_code = None
+    _in_container = None
     _chrome_service = None
     _chrome_options = None
     _chrome_capabilities = None
 
-    def __init__(self, chrome_path: str, profile_path: str, get_response_code=True, sleep=10):
-        self._set_response_possibility(get_response_code)
+    def __init__(self, chrome_path: str, profile_path: str, get_response_code=True, sleep=10, in_container=True):
+        self._set_addition_options(get_response_code, in_container)
         self._set_sleep(sleep)
         self._set_chrome(chrome_path, profile_path)
 
-    def _set_response_possibility(self, get_response_code):
+    def _set_addition_options(self, get_response_code, in_container):
         self._get_code = get_response_code
+        self._in_container = in_container
 
     def _set_sleep(self, sleep):
         self._sleep = sleep
@@ -35,6 +37,9 @@ class Parser:
             self._chrome_capabilities = DesiredCapabilities.CHROME.copy()
             self._set_chrome_capabilities()
 
+        if self._in_container:
+            self._set_container_options()
+
     def _set_chrome_options(self, profile_path):
         self._chrome_options.add_argument('--allow-profiles-outside-user-dir')
         self._chrome_options.add_argument('--enable-profile-shortcut-manager')
@@ -43,6 +48,10 @@ class Parser:
 
     def _set_chrome_capabilities(self):
         self._chrome_capabilities['goog:loggingPrefs'] = {'performance': 'ALL'}
+
+    def _set_container_options(self):
+        self._chrome_options.add_argument('--headless=new')
+        self._chrome_options.add_argument('--no-sandbox')
 
     def _parse(self, url):
         with webdriver.Chrome(service=self._chrome_service,

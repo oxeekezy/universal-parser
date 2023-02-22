@@ -9,7 +9,7 @@ with open('requirements.txt', 'r') as file:
 
 setuptools.setup(
     name="oxeekparser",
-    version="3.3.0",
+    version="3.4.0",
     author="oxeek",
     author_email="workkukin@gmail.com",
     description="Universal parser with using regex",
@@ -23,7 +23,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.10',
+    python_requires='>=3.9',
 )
 
 

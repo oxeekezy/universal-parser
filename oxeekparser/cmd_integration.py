@@ -1,18 +1,18 @@
 import os
-
-from parser import Parser
-import json
 import sys
+from parser import Parser
 
 try:
     chrome_path = sys.argv[1]
     profile_path = sys.argv[2]
     sleep = int(sys.argv[3])
     url = sys.argv[4]
+    in_container = True
 
-    #TODO: Добавить автоактивацию венва
+    if len(sys.argv) > 5:
+        in_container = int(sys.argv[5]) == 1 if True else False
 
-    parser = Parser(chrome_path, profile_path, sleep=sleep)
+    parser = Parser(chrome_path, profile_path, sleep=sleep, in_container=in_container)
     html = parser.handle(url).get_html()
     response_code = parser.get_response()
 
@@ -23,5 +23,5 @@ except:
 os.system('cls||clear')
 print(result)
 
-
-
+# /Users/kukinnikitan/Desktop/PySource/chrome/chromedriver
+# /Users/kukinnikitan/Desktop/PySource/chrome/profile
