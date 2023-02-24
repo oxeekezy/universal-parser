@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from parser import Parser
 
 try:
@@ -21,7 +22,4 @@ except:
     result = {}
 
 os.system('cls||clear')
-print(result)
-
-# /Users/kukinnikitan/Desktop/PySource/chrome/chromedriver
-# /Users/kukinnikitan/Desktop/PySource/chrome/profile
+print(json.dumps(result))
